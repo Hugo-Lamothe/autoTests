@@ -1,0 +1,67 @@
+Résultats Clés
+Data Received et Data Sent :
+
+data_received: 68 kB à 97 B/s
+data_sent: 21 kB à 30 B/s
+Ces chiffres indiquent la quantité totale de données reçues et envoyées pendant le test. La faible quantité de données suggère que les réponses HTTP sont petites, ce qui est typique pour des réponses simples ou statiques.
+
+Durées des Requêtes HTTP :
+
+http_req_duration: avg=1.15ms, min=0s, med=635.9µs, max=15.72ms, p(90)=2.15ms, p(95)=3.15ms
+http_req_waiting: avg=1.03ms, min=0s, med=537.5µs, max=15.72ms, p(90)=1.68ms, p(95)=2.58ms
+Ces métriques montrent que la majorité des requêtes sont traitées très rapidement (en moyenne 1.15 ms), avec des temps de réponse très courts pour 90% et 95% des requêtes. Cependant, il y a des valeurs maximales élevées (jusqu'à 15.72 ms), ce qui peut indiquer des pointes de latence occasionnelles.
+
+Requêtes HTTP Bloquées et Connexion :
+
+http_req_blocked: avg=91.24µs, max=2.42ms
+http_req_connecting: avg=63.41µs, max=2.26ms
+Ces métriques sont généralement très faibles, ce qui indique que la connexion au serveur est rapide et qu'il y a peu de temps d'attente avant que la requête ne commence à être traitée.
+
+Requêtes Envoyées et Reçues :
+
+http_req_sending: avg=39.91µs
+http_req_receiving: avg=76.6µs
+Ces valeurs indiquent que le temps pris pour envoyer et recevoir des données est minime par rapport à la durée totale de la requête.
+
+Requêtes HTTP Echouées :
+
+http_req_failed: 0.00%
+Aucun échec n'est enregistré, ce qui est un bon signe de stabilité.
+
+Durée des Itérations :
+
+iteration_duration: avg=1m1s, min=1s, max=11m23s
+La durée moyenne des itérations est très élevée (1m1s), avec un maximum de 11m23s. Cela pourrait indiquer des goulots d'étranglement importants.
+
+Virtual Users (VUs) :
+
+vus: min=2, max=28
+vus_max: min=500, max=500
+Le nombre d'utilisateurs virtuels actifs varie entre 2 et 28, bien en deçà des 500 VUs maximum configurés. Cela peut indiquer un problème avec la capacité à maintenir un grand nombre de connexions simultanées.
+
+Analyse et Suggestions
+Temps de Réponse :
+
+Les temps de réponse moyens et médians sont bons (1.15 ms et 635.9 µs), mais les temps maximums (jusqu'à 15.72 ms) sont relativement élevés. Cela pourrait être dû à des ressources système limitées ou à des tâches de fond qui provoquent des pointes de latence.
+Utilisation des Utilisateurs Virtuels :
+
+Le fait que le nombre de VUs actifs soit bien inférieur au maximum configuré (28 contre 500) suggère que votre application ou le serveur n'est pas capable de gérer autant de connexions simultanées. Cela peut être dû à des limites de configuration (par exemple, le nombre maximum de connexions simultanées) ou à des goulots d'étranglement dans le code de l'application.
+Durée des Itérations :
+
+La durée élevée des itérations (1m1s en moyenne, jusqu'à 11m23s) suggère que certaines requêtes ou opérations sont beaucoup plus longues que d'autres. Cela peut indiquer des problèmes avec des requêtes spécifiques, des opérations de base de données, ou des limitations de ressources serveur (comme la CPU ou la mémoire).
+Actions Recommandées
+Optimiser la Configuration du Serveur :
+
+Assurez-vous que le serveur est configuré pour gérer un grand nombre de connexions simultanées. Vérifiez les paramètres comme max_connections pour les bases de données et les limites de file d'attente pour le serveur web.
+Profilage et Optimisation du Code :
+
+Utilisez des outils de profilage pour identifier les parties du code qui provoquent des pointes de latence. Optimisez ces parties pour améliorer les temps de réponse.
+Surveiller les Ressources du Serveur :
+
+Surveillez l'utilisation de la CPU, de la mémoire et d'autres ressources système pendant les tests de charge. Assurez-vous que le serveur dispose de ressources suffisantes pour gérer la charge.
+Analyser les Logs du Serveur :
+
+Examinez les logs du serveur pour détecter des erreurs ou des avertissements qui pourraient indiquer des problèmes de performance ou des goulots d'étranglement.
+Tests avec des Paliers d'Utilisateurs :
+
+Effectuez des tests de charge progressifs en augmentant graduellement le nombre d'utilisateurs virtuels pour identifier à quel point le serveur commence à montrer des signes de surcharge. Cela peut aider à déterminer la capacité maximale du serveur.
