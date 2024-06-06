@@ -1,8 +1,11 @@
 const http = require('http');
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const app = require('./app');
 
 const server = http.createServer(app);
+const dataFilePath = path.join(__dirname, 'tasks.json');
 
 const request = (options, body) => {
     return new Promise((resolve, reject) => {
@@ -49,6 +52,28 @@ const runTests = async () => {
     taskId = res.body.id;
 
     // Test de lecture de toutes les tâches
+    res = await request({
+        hostname: 'localhost',
+        port: 3000,
+        path: '/tasks',
+        method: 'GET'
+    });
+
+    assert.strictEqual(res.statusCode, 200);
+    assert.ok(res.body.some(task => task.id === taskId && task.title === 'Test Task'));
+
+    // Redémarrer le serveur pour vérifier la persistance des données
+    server.close();
+
+    // Attendre un peu pour que le serveur se ferme complètement
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Recharger les tâches depuis le fichier pour simuler un redémarrage du serveur
+    tasks = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+
+    server.listen(3000);
+
+    // Vérifier que la tâche est toujours présente après redémarrage
     res = await request({
         hostname: 'localhost',
         port: 3000,
